@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import {isError} from "../db/connectUser.js";
+import {getErrorMessage } from "../db/connectUser.js";
 
 const jwt_secret_key = process.env.JWT_SECRET_KEY;
 
@@ -17,14 +17,13 @@ const myLogger = (req, res, next) => {
 }
 
 
-
 const verifyToken = (req, res, next) => {
 
     const token = req.cookies.token;
     if (token) {
         jwt.verify(token, jwt_secret_key, (err, decoded) => {
             if (err) {
-                res.status(401).send('Unauthorized');
+                res.status(401).render('Unauthorized');
             } else {
                 req.userID = decoded;
 
@@ -35,15 +34,15 @@ const verifyToken = (req, res, next) => {
             }
         });
     } else {
-        res.status(401).send('Unauthorized');
+        res.status(401).render('Unauthorized');
     }
 };
 
-const myErrorHandler = (req, res,next) => {
-
-    if(isError){
-        res.render('servererror',{serverError:" Database not connected, Please check your network connection and try again"});
-    }else{
+const myErrorHandler = (req, res, next) => {
+    const errorMessage = getErrorMessage();
+    if (errorMessage) {
+        res.render('servererror', { serverError: errorMessage });
+    } else {
         next();
     }
 }

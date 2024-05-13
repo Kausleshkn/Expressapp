@@ -6,8 +6,7 @@ import{ myLogger,verifyToken,myErrorHandler} from '../middlewares/route.js';
 const router = express.Router();
 
 // protected route
-router.get('/datadashboard',myLogger);
-router.get('/datadashboard',verifyToken);
+router.get('/datadashboard', myLogger, verifyToken);
 router.get('/',myErrorHandler);
 
 // authentication site route
@@ -28,5 +27,6 @@ router.get('/logout/:id',webUser.logoutUser);
 
 router.post("/submitform",portfolioData);
 router.get("/hiddenroute",displayUserdata);
+
 
 export default router;

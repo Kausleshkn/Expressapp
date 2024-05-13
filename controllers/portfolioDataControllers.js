@@ -1,6 +1,11 @@
 import fs from "fs";
 import qs from "querystring";
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 let count = 1;
 
@@ -26,7 +31,7 @@ const portfolioData = async (req, res) => {
             data.id = count;
             count++;
 
-            fs.appendFile(`C:\\Users\\HP\\Desktop\\coding\\ExpressJs\\authenticationproject\\controllers\\user_msg.txt`, `${JSON.stringify(data)} \n \n`, error => {
+            fs.appendFile(path.join(__dirname, 'user_msg.txt'), `${JSON.stringify(data)} \n \n`, error => {
                 if (error) {
                     res.status(500).send("Data not recived");
                 } else {
@@ -38,13 +43,12 @@ const portfolioData = async (req, res) => {
     } catch (error) {
         res.status(503).send("Data not submitted");
     }
-
 };
 
 
 const displayUserdata = (req, res) => {
 
-    let stream = fs.createReadStream("./controllers/user_msg.txt", { encoding: 'utf-8' });
+    let stream = fs.createReadStream(path.join(__dirname, 'user_msg.txt'), { encoding: 'utf-8' });
     res.setHeader('Content-Type', 'application/json'); // application/json, text/plain
     stream.pipe(res);
 
