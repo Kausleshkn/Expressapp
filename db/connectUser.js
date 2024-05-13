@@ -5,7 +5,6 @@ let errorMessage = null;
 const connectDB = async (url) => {
     try {
         const options = {
-            dbName: process.env.DBNAME,
             useNewUrlParser: true,
             useUnifiedTopology: true
         };
