@@ -8,13 +8,15 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import MongoStore from 'connect-mongo';
+import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 // const dataBase_URL = process.env.dataBase_URL || 'mongodb://127.0.0.1:27017';
 const dataBase_URL = process.env.DATABASE_URL;
 
@@ -23,6 +25,27 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
+
+// Create MongoStore instance
+const MongoStoreSession = MongoStore(session);
+
+// Configure session middleware
+app.use(
+  session({
+    secret: 'jhdbbkbdvbjbkbdbkjbdboggbkftsrsdv',
+    resave: false,
+    saveUninitialized: true,
+    store: new MongoStoreSession({
+      mongooseConnection: mongoose.connection,
+      collection: 'sessions', 
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24, 
+      secure: true, 
+      httpOnly: true,
+    },
+  })
+);
 
 app.use(session({
   name: 'logout',
@@ -60,6 +83,6 @@ connectDB(dataBase_URL)
     });
   });
 
-app.listen(port, () => console.log(`App is Running`));
+app.listen(port, () => console.log(`App is Running on port ${port}`));
 
 export default app;

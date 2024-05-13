@@ -4,7 +4,11 @@ let errorMessage = null;
 
 const connectDB = async (url) => {
     try {
-        const options = { dbName: process.env.DBNAME };
+        const options = {
+            dbName: process.env.DBNAME,
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        };
         await mongoose.connect(url, options);
         console.log('Database Connected....');
     } catch (error) {
@@ -18,4 +22,4 @@ const getErrorMessage = () => errorMessage;
 
 
 export default connectDB;
-export{getErrorMessage};
+export { getErrorMessage };
