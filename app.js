@@ -58,6 +58,10 @@ app.use('/delete', express.static(join(__dirname, 'public')));
 app.use('/logout', express.static(join(__dirname, 'public')));
 app.use('/update', express.static(join(__dirname, 'public')));
 
+app.use('/favicon.ico', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'favicon.ico'));
+});
+
 
 
 // Connecting with Database
