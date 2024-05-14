@@ -9,7 +9,6 @@ import cookieParser from 'cookie-parser';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import MongoStore from 'connect-mongo';
-import mongoose from 'mongoose';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,26 +25,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser());
 
-// Create MongoStore instance
-const MongoStoreSession = MongoStore(session);
-
 // Configure session middleware
-app.use(
-  session({
-    secret: 'jhdbbkbdvbjbkbdbkjbdboggbkftsrsdv',
-    resave: false,
-    saveUninitialized: true,
-    store: new MongoStoreSession({
-      mongooseConnection: mongoose.connection,
-      collection: 'sessions', 
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24, 
-      secure: true, 
-      httpOnly: true,
-    },
-  })
-);
+app.use(session({
+  secret: 'fuckthestate',
+  store: MongoStore.create({
+    mongoUrl: dataBase_URL,
+  }),
+  resave: false,
+  saveUninitialized: true
+}));
 
 app.use(session({
   name: 'logout',
@@ -74,7 +62,7 @@ app.use('/update', express.static(join(__dirname, 'public')));
 
 // Connecting with Database
 connectDB(dataBase_URL)
-  .then(() => {        
+  .then(() => {
     app.use('/', users);
   })
   .catch((error) => {
